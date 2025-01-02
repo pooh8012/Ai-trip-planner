@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<svg width="171" height="32" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <g class="layer">
+  <title>Layer 1</title>
+  <path class="ccustom" d="m0,16c0,-8.84 7.16,-16 16,-16l21,0c8.84,0 16,7.16 16,16l0,16l-37,0c-8.84,0 -16,-7.16 -16,-16z" fill="#4845D2" id="svg_10"/>
+  <rect class="ccompli2" fill="#A5B4FC" height="20" id="svg_11" rx="10" width="41" x="6" y="6"/>
+  <circle cx="16" cy="16" fill="#000000" id="svg_12" r="5"/>
+  <circle cx="14" cy="14" fill="#ffffff" id="svg_13" r="1"/>
+  <circle cx="38" cy="16" fill="#000000" id="svg_14" r="5"/>
+  <circle cx="36" cy="14" fill="#ffffff" id="svg_15" r="1"/>
+ </g>
+</svg>
