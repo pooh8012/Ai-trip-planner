@@ -20,7 +20,7 @@ function Viewtrip() {
       console.log("document", docSnap.data());
       setTrip(docSnap.data());
     } else {
-      console.log("No such documents");
+      console.log("No  a such documents");
     }
   };
 
