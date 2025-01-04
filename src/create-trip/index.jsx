@@ -1,11 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { use } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 
 function CreateTrip() {
-  const [destination, setDestination] = useState("");
   const [days, setDays] = useState("");
   const [budget, setBudget] = useState("");
   const [group, setGroup] = useState("");
+  const [place, setPlace] = useState("");
+  const [formData, setFormData] = useState([]);
+  const handleInputChange = (name, value) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-10 px-5 mt-10">
@@ -25,6 +37,13 @@ function CreateTrip() {
           </label>
           <GooglePlacesAutocomplete
             apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
+            selectProps={{
+              place,
+              onChange: (v) => {
+                setPlace(v);
+                handleInputChange("location", v);
+              },
+            }}
           />
         </div>
 
@@ -36,6 +55,7 @@ function CreateTrip() {
             type="number"
             placeholder="e.g., 3"
             value={days}
+            onClick={(e) => handleInputChange("numberOfDay", e.target.value)}
             onChange={(e) => setDays(e.target.value)}
             className="w-full px-4 py-3 bg-gray-800 text-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
           />
@@ -46,33 +66,20 @@ function CreateTrip() {
             What is your budget? 💵
           </label>
           <div className="flex space-x-4">
-            <button
-              type="button"
-              onClick={() => setBudget("cheap")}
-              className={`px-4 py-3 w-full rounded-lg ${
-                budget === "cheap" ? "bg-purple-500" : "bg-gray-800"
-              } text-gray-300 hover:bg-purple-600 focus:outline-none`}
-            >
-              Cheap
-            </button>
-            <button
-              type="button"
-              onClick={() => setBudget("moderate")}
-              className={`px-4 py-3 w-full rounded-lg ${
-                budget === "moderate" ? "bg-purple-500" : "bg-gray-800"
-              } text-gray-300 hover:bg-purple-600 focus:outline-none`}
-            >
-              Moderate
-            </button>
-            <button
-              type="button"
-              onClick={() => setBudget("luxury")}
-              className={`px-4 py-3 w-full rounded-lg ${
-                budget === "luxury" ? "bg-purple-500" : "bg-gray-800"
-              } text-gray-300 hover:bg-purple-600 focus:outline-none`}
-            >
-              Luxury
-            </button>
+            {SelectBudgetOptions.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => setBudget(option.title.toLowerCase())}
+                className={`px-4 py-3 w-full rounded-lg ${
+                  budget === option.title.toLowerCase()
+                    ? "bg-purple-500"
+                    : "bg-gray-800"
+                } text-gray-300 hover:bg-purple-600 focus:outline-none`}
+              >
+                {option.icon} {option.title}
+              </button>
+            ))}
           </div>
         </div>
 
