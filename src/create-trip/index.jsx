@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { use } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+import {
+  AI_PROMPT,
+  SelectBudgetOptions,
+  SelectTravelersList,
+} from "../constants/options";
+import { Input } from "../components/ui/input";
+import { chatSession } from "../service/AIModal";
 
 function CreateTrip() {
   const [days, setDays] = useState("");
   const [budget, setBudget] = useState("");
   const [group, setGroup] = useState("");
   const [place, setPlace] = useState("");
-  const [formData, setFormData] = useState([]);
+  const [formData, setFormData] = useState({});
+
   const handleInputChange = (name, value) => {
     setFormData({
       ...formData,
@@ -19,6 +26,26 @@ function CreateTrip() {
     console.log(formData);
   }, [formData]);
 
+  const onGenerateTrip = async (e) => {
+    e.preventDefault();
+    const tripData = {
+      location: formData.location || "",
+      numberOfDay: formData.numberOfDay || "",
+      budget: formData.budget || "",
+      traveler: formData.traveler || "",
+    };
+    // console.log("Generated Trip:", tripData);
+
+    const FINAL_PROMPT = AI_PROMPT.replace("{location}", formData?.location)
+      .replace("{totalDays}", formData?.numberOfDay)
+      .replace("{traveler}", formData?.traveler)
+      .replace("{budget}", formData?.budget);
+
+    console.log(FINAL_PROMPT);
+    const result = await chatSession.sendMessage(FINAL_PROMPT);
+    console.log(result?.response?.text());
+  };
+
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-10 px-5 mt-10">
       <h2 className="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500 mb-4">
@@ -29,7 +56,10 @@ function CreateTrip() {
         a customized itinerary based on your preferences.
       </p>
 
-      <form className="bg-gray-900 p-8 rounded-xl shadow-xl space-y-6">
+      <form
+        className="bg-gray-900 p-8 rounded-xl shadow-xl space-y-6"
+        onSubmit={onGenerateTrip}
+      >
         {/* Destination Input */}
         <div>
           <label className="block text-lg font-medium text-white mb-2">
@@ -41,7 +71,7 @@ function CreateTrip() {
               place,
               onChange: (v) => {
                 setPlace(v);
-                handleInputChange("location", v);
+                handleInputChange("location", v.label);
               },
             }}
           />
@@ -51,13 +81,12 @@ function CreateTrip() {
           <label className="block text-lg font-medium text-gray-200 mb-2">
             How many days are you planning your trip?
           </label>
-          <input
+          <Input
             type="number"
             placeholder="e.g., 3"
             value={days}
-            onClick={(e) => handleInputChange("numberOfDay", e.target.value)}
-            onChange={(e) => setDays(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-800 text-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+            onChange={(e) => handleInputChange("numberOfDay", e.target.value)}
+            className="w-full px-4 py-3 text-white !important bg-gray-800 placeholder-gray-500 rounded-lg border border-gray-700 focus:ring-2 focus:ring-purple-500 focus:outline-none"
           />
         </div>
 
@@ -70,7 +99,7 @@ function CreateTrip() {
               <button
                 key={option.id}
                 type="button"
-                onClick={() => setBudget(option.title.toLowerCase())}
+                onClick={() => handleInputChange("budget", option.title)}
                 className={`px-4 py-3 w-full rounded-lg ${
                   budget === option.title.toLowerCase()
                     ? "bg-purple-500"
@@ -88,42 +117,20 @@ function CreateTrip() {
             Who do you plan on traveling with? ✈️
           </label>
           <div className="grid grid-cols-2 gap-4">
-            <button
-              type="button"
-              onClick={() => setGroup("solo")}
-              className={`px-4 py-3 rounded-lg ${
-                group === "solo" ? "bg-purple-500" : "bg-gray-800"
-              } text-gray-300 hover:bg-purple-600 focus:outline-none`}
-            >
-              Just Me
-            </button>
-            <button
-              type="button"
-              onClick={() => setGroup("couple")}
-              className={`px-4 py-3 rounded-lg ${
-                group === "couple" ? "bg-purple-500" : "bg-gray-800"
-              } text-gray-300 hover:bg-purple-600 focus:outline-none`}
-            >
-              A Couple
-            </button>
-            <button
-              type="button"
-              onClick={() => setGroup("family")}
-              className={`px-4 py-3 rounded-lg ${
-                group === "family" ? "bg-purple-500" : "bg-gray-800"
-              } text-gray-300 hover:bg-purple-600 focus:outline-none`}
-            >
-              Family
-            </button>
-            <button
-              type="button"
-              onClick={() => setGroup("friends")}
-              className={`px-4 py-3 rounded-lg ${
-                group === "friends" ? "bg-purple-500" : "bg-gray-800"
-              } text-gray-300 hover:bg-purple-600 focus:outline-none`}
-            >
-              Friends
-            </button>
+            {SelectTravelersList.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => handleInputChange("traveler", option.people)}
+                className={`px-4 py-3 rounded-lg ${
+                  group === option.title.toLowerCase()
+                    ? "bg-purple-500"
+                    : "bg-gray-800"
+                } text-gray-300 hover:bg-purple-600 focus:outline-none`}
+              >
+                {option.icon} {option.people}
+              </button>
+            ))}
           </div>
         </div>
 
