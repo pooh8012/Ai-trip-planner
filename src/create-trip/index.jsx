@@ -7,6 +7,9 @@ import {
 } from "../constants/options";
 import { Input } from "../components/ui/input";
 import { chatSession } from "../service/AIModal";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../service/firebaseConfig";
+import { useNavigate } from "react-router-dom";
 
 function CreateTrip() {
   const [days, setDays] = useState("");
@@ -14,7 +17,8 @@ function CreateTrip() {
   const [group, setGroup] = useState("");
   const [place, setPlace] = useState("");
   const [formData, setFormData] = useState({});
-
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const handleInputChange = (name, value) => {
     setFormData({
       ...formData,
@@ -26,24 +30,53 @@ function CreateTrip() {
     console.log(formData);
   }, [formData]);
 
+  const saveAITrip = async (TripData) => {
+    setLoading(true);
+    const docID = Date.now().toString();
+    try {
+      await setDoc(doc(db, "AITrips", docID), {
+        userSelection: formData,
+        tripData: JSON.parse(TripData),
+        id: docID,
+      });
+      console.log("Trip saved successfully!", docID);
+    } catch (error) {
+      console.error("Error saving trip:", error);
+      alert("An error occurred while saving your trip.");
+    } finally {
+      setLoading(false);
+      navigate("/view-trip/" + docID);
+    }
+  };
+
   const onGenerateTrip = async (e) => {
     e.preventDefault();
-    const tripData = {
-      location: formData.location || "",
-      numberOfDay: formData.numberOfDay || "",
-      budget: formData.budget || "",
-      traveler: formData.traveler || "",
-    };
-    // console.log("Generated Trip:", tripData);
+    if (
+      !formData.location ||
+      !formData.numberOfDay ||
+      !formData.budget ||
+      !formData.traveler
+    ) {
+      alert("Please complete all fields before generating a trip!");
+      return;
+    }
 
-    const FINAL_PROMPT = AI_PROMPT.replace("{location}", formData?.location)
-      .replace("{totalDays}", formData?.numberOfDay)
-      .replace("{traveler}", formData?.traveler)
-      .replace("{budget}", formData?.budget);
+    setLoading(true);
+    const FINAL_PROMPT = AI_PROMPT.replace("{location}", formData.location)
+      .replace("{totalDays}", formData.numberOfDay)
+      .replace("{traveler}", formData.traveler)
+      .replace("{budget}", formData.budget);
 
-    console.log(FINAL_PROMPT);
-    const result = await chatSession.sendMessage(FINAL_PROMPT);
-    console.log(result?.response?.text());
+    try {
+      const result = await chatSession.sendMessage(FINAL_PROMPT);
+      console.log("Generated Trip Data:", result?.response?.text());
+      saveAITrip(result?.response?.text());
+    } catch (error) {
+      console.error("Error generating trip:", error);
+      alert("An error occurred while generating your trip.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

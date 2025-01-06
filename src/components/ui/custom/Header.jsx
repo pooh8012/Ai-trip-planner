@@ -13,9 +13,6 @@ function Header() {
           AI Trip Planner
         </h1>
       </div>
-      <button className="px-6 py-3 mr-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-full shadow-lg transition-transform transform hover:scale-105">
-        Sign In
-      </button>
     </header>
   );
 }
