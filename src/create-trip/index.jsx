@@ -19,6 +19,7 @@ function CreateTrip() {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleInputChange = (name, value) => {
     setFormData({
       ...formData,
@@ -80,7 +81,13 @@ function CreateTrip() {
   };
 
   return (
-    <div className="sm:px-10 md:px-32 lg:px-56 xl:px-10 px-5 mt-10">
+    <div className="sm:px-10 md:px-32 lg:px-56 xl:px-10 px-5 mt-10 relative ml-32">
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 animate-in">
+          <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24 animate-in"></div>
+        </div>
+      )}
+
       <h2 className="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500 mb-4">
         Tell us your travel preferences 🏕️🌴
       </h2>
@@ -106,6 +113,20 @@ function CreateTrip() {
                 setPlace(v);
                 handleInputChange("location", v.label);
               },
+              styles: {
+                input: (provided) => ({
+                  ...provided,
+                  color: "black", // Keeps input text white
+                }),
+                option: (provided) => ({
+                  ...provided,
+                  color: "black", // Makes dropdown options text black
+                }),
+                singleValue: (provided) => ({
+                  ...provided,
+                  color: "black", // Keeps the selected value text white
+                }),
+              },
             }}
           />
         </div>
@@ -118,8 +139,11 @@ function CreateTrip() {
             type="number"
             placeholder="e.g., 3"
             value={days}
-            onChange={(e) => handleInputChange("numberOfDay", e.target.value)}
-            className="w-full px-4 py-3 text-white !important bg-gray-800 placeholder-gray-500 rounded-lg border border-gray-700 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+            onChange={(e) => {
+              setDays(e.target.value);
+              handleInputChange("numberOfDay", e.target.value);
+            }}
+            className="w-full px-4 py-3 text-white bg-gray-800 placeholder-gray-500 rounded-lg border border-gray-700 focus:ring-2 focus:ring-purple-500 focus:outline-none"
           />
         </div>
 
@@ -132,12 +156,15 @@ function CreateTrip() {
               <button
                 key={option.id}
                 type="button"
-                onClick={() => handleInputChange("budget", option.title)}
+                onClick={() => {
+                  setBudget(option.title.toLowerCase());
+                  handleInputChange("budget", option.title);
+                }}
                 className={`px-4 py-3 w-full rounded-lg ${
                   budget === option.title.toLowerCase()
-                    ? "bg-purple-500"
-                    : "bg-gray-800"
-                } text-gray-300 hover:bg-purple-600 focus:outline-none`}
+                    ? "bg-purple-500 text-white"
+                    : "bg-gray-800 text-gray-300"
+                } hover:bg-purple-600 focus:outline-none`}
               >
                 {option.icon} {option.title}
               </button>
@@ -154,12 +181,15 @@ function CreateTrip() {
               <button
                 key={option.id}
                 type="button"
-                onClick={() => handleInputChange("traveler", option.people)}
+                onClick={() => {
+                  setGroup(option.people.toLowerCase());
+                  handleInputChange("traveler", option.people);
+                }}
                 className={`px-4 py-3 rounded-lg ${
-                  group === option.title.toLowerCase()
-                    ? "bg-purple-500"
-                    : "bg-gray-800"
-                } text-gray-300 hover:bg-purple-600 focus:outline-none`}
+                  group === option.people.toLowerCase()
+                    ? "bg-purple-500 text-white"
+                    : "bg-gray-800 text-gray-300"
+                } hover:bg-purple-600 focus:outline-none`}
               >
                 {option.icon} {option.people}
               </button>

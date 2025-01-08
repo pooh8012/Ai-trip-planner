@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { GetPlaceDetails } from "../../service/GlobalAPI";
 
 function InformationSection({ trip }) {
   if (!trip) return null;
+
+  useEffect(() => {
+    trip && GetPlacesPhoto();
+  }, [trip]);
+  const GetPlacesPhoto = async () => {
+    const data = {
+      textQuery: trip?.userSelection?.location,
+    };
+    const result = await GetPlaceDetails(data).then((resp) => {
+      console.log(resp.data, result);
+    });
+  };
 
   return (
     <div className="p-6 bg-[#1e1e1e] rounded-xl shadow-lg">
