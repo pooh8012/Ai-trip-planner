@@ -4,36 +4,25 @@ function InformationSection({ trip }) {
   if (!trip) return null;
 
   return (
-    <div className="p-4 bg-gray-900 rounded-xl shadow-lg">
+    <div className="p-6 bg-[#1e1e1e] rounded-xl shadow-lg">
       <img
-        src={"/img.jpg"}
-        alt="Trip Image"
-        className="h-[340px] w-full object-cover rounded-xl mb-4"
+        src="/img.jpg"
+        alt="Trip"
+        className="h-60 w-full object-cover rounded-lg mb-6 hover:scale-105 transition duration-300"
       />
-      <div className="text-white space-y-2">
-        <h2 className="text-xl font-semibold">
-          {trip?.userSelection?.location}
+      <div className="text-gray-300 space-y-4">
+        <h2 className="text-2xl font-bold text-white flex items-center space-x-2">
+          ✈️ <span>{trip?.userSelection?.location || "Your Destination"}</span>
         </h2>
-        <div className="flex space-x-4 text-sm">
-          <div className="flex items-center space-x-2">
-            <span role="img" aria-label="calendar">
-              🗓️
-            </span>
-            <span>{trip?.userSelection?.numberOfDay} days</span>
+        <div className="flex flex-wrap gap-4 text-sm">
+          <div className="flex items-center space-x-2 text-gray-400">
+            🗓️ <span>{trip?.userSelection?.numberOfDay || "0"} days</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <span role="img" aria-label="money">
-              💰
-            </span>
-            <span>{trip?.userSelection?.budget}</span>
+          <div className="flex items-center space-x-2 text-gray-400">
+            💰 <span>{trip?.userSelection?.budget || "N/A"}</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <img
-              src={"/backpack-traveller-man.png"}
-              alt="traveller"
-              className="h-6"
-            />
-            <span>{trip?.userSelection?.traveler}</span>
+          <div className="flex items-center space-x-2 text-gray-400">
+            🎒 <span>{trip?.userSelection?.traveler || "Solo"}</span>
           </div>
         </div>
       </div>
