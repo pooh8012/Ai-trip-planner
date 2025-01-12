@@ -23,6 +23,7 @@ function InformationSection({ trip }) {
         alt="Trip"
         className="h-60 w-full object-cover rounded-lg mb-6 hover:scale-105 transition duration-300"
       />
+      //Something
       <div className="text-gray-300 space-y-4">
         <h2 className="text-2xl font-bold text-white flex items-center space-x-2">
           ✈️ <span>{trip?.userSelection?.location || "Your Destination"}</span>
